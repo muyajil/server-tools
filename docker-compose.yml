@@ -1,0 +1,91 @@
+version: "3"
+services:
+  # START PIHOLE
+  pihole:
+    image: pihole/pihole:latest
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+    volumes:
+      - "${VOLUMES_PATH}/pihole/etc-pihole/:/etc/pihole/"
+      - "${VOLUMES_PATH}/pihole/etc-dnsmasq.d/:/etc/dnsmasq.d/"
+    dns:
+      - 127.0.0.1
+      - 1.1.1.1
+    environment:
+      VIRTUAL_HOST: pihole.${TLD}
+      LETSENCRYPT_HOST: pihole.${TLD}
+      VIRTUAL_PORT: 80
+      TZ: Europe/Zurich
+    restart: unless-stopped
+    networks:
+      - ${PROXY_NETWORK_NAME}
+  # END PIHOLE
+  # START NETDATA
+  netdata:
+    image: netdata/netdata:latest
+    hostname: netdata.${TLD}
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - /etc/passwd:/host/etc/passwd:ro
+      - /etc/group:/host/etc/group:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /var/run/docker-proxy-acl/docker.sock:/var/run/docker.sock:ro
+    environment:
+      VIRTUAL_HOST: netdata.${TLD}
+      LETSENCRYPT_HOST: netdata.${TLD}
+      VIRTUAL_PORT: 19999
+    restart: unless-stopped
+    depends_on:
+      - docker-proxy
+    networks:
+      - ${PROXY_NETWORK_NAME}
+  # END NETDATA
+  # START PORTAINER
+  portainer:
+    image: portainer/portainer:latest
+    container_name: portainer
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+      - '${VOLUMES_PATH}/portainer:/data'
+    environment:
+      VIRTUAL_HOST: portainer.${TLD}
+      LETSENCRYPT_HOST: portainer.${TLD}
+      VIRTUAL_PORT: 9000
+    networks:
+      - ${PROXY_NETWORK_NAME}
+  # END PORTAINER
+  # START DOCKER PROXY
+  docker-proxy:
+    image: qmcgaw/docker-proxy-acl-alpine:latest
+    container_name: docker-proxy
+    volumes:
+      - /var/run/docker-proxy-acl:/tmp/docker-proxy-acl
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -a containers
+    network_mode: none
+    restart: always
+  # END DOCKER PROXY
+  # START WebDAV NAS BACKUP
+  webdav-nas-backup:
+    image: bytemark/webdav:latest
+    restart: unless-stopped
+    container_name: webdav-nas-backup
+    ports:
+      - "8888:80"
+    environment:
+    AUTH_TYPE: Digest
+    USERNAME: ${WEBDAV_USER}
+    PASSWORD: ${WEBDAV_PW}
+    volumes:
+      - ${WEBDAV_HOST_PATH}:/var/lib/dav
+  # END WebDAV NAS BACKUP
+
+networks:
+  ${PROXY_NETWORK_NAME}:
+    - external: true
