@@ -90,6 +90,7 @@ services:
     build: ./crondocker
     image: crondocker-server-tools
     network_mode: host
+    user: 1000:1000
     volumes:
       - "./crondocker/crontab:/crontab"
       - "${BACKUP_TARGET}:/backup"
