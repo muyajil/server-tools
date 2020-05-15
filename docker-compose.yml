@@ -49,7 +49,6 @@ services:
   # START PORTAINER
   portainer:
     image: portainer/portainer:latest
-    container_name: portainer
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock'
       - '${VOLUMES_PATH}/portainer:/data'
@@ -63,7 +62,6 @@ services:
   # START DOCKER PROXY
   docker-proxy:
     image: qmcgaw/docker-proxy-acl-alpine:latest
-    container_name: docker-proxy
     volumes:
       - /var/run/docker-proxy-acl:/tmp/docker-proxy-acl
       - /var/run/docker.sock:/var/run/docker.sock
@@ -75,7 +73,6 @@ services:
   webdav-nas-backup:
     image: bytemark/webdav:latest
     restart: unless-stopped
-    container_name: webdav-nas-backup
     ports:
       - "8888:80"
     environment:
