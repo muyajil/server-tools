@@ -20,7 +20,7 @@ services:
       TZ: Europe/Zurich
     restart: unless-stopped
     networks:
-      - ${PROXY_NETWORK_NAME}
+      - base-network
   # END PIHOLE
   # START NETDATA
   netdata:
@@ -44,7 +44,7 @@ services:
     depends_on:
       - docker-proxy
     networks:
-      - ${PROXY_NETWORK_NAME}
+      - base-network
   # END NETDATA
   # START PORTAINER
   portainer:
@@ -58,7 +58,7 @@ services:
       LETSENCRYPT_HOST: portainer.${TLD}
       VIRTUAL_PORT: 9000
     networks:
-      - ${PROXY_NETWORK_NAME}
+      - base-network
   # END PORTAINER
   # START DOCKER PROXY
   docker-proxy:
@@ -79,13 +79,25 @@ services:
     ports:
       - "8888:80"
     environment:
-    AUTH_TYPE: Digest
-    USERNAME: ${WEBDAV_USER}
-    PASSWORD: ${WEBDAV_PW}
+      AUTH_TYPE: Digest
+      USERNAME: ${WEBDAV_USER}
+      PASSWORD: ${WEBDAV_PW}
     volumes:
       - ${WEBDAV_HOST_PATH}:/var/lib/dav
   # END WebDAV NAS BACKUP
+  # START crondocker
+  crondocker:
+    build: ./crondocker
+    image: crondocker-server-tools
+    network_mode: host
+    volumes:
+      - "./crondocker/crontab:/crontab"
+      - "${BACKUP_TARGET}:/backup"
+      - "${BACKUP_SOURCE}:/source"
+    environment:
+      SLACK_SERVICE_PATH: ${SLACK_SERVICE_PATH}
+  # END crondocker
 
 networks:
-  ${PROXY_NETWORK_NAME}:
-    - external: true
+  base-network:
+    external: true

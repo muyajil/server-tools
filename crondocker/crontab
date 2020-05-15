@@ -1,0 +1,2 @@
+#0 */4 * * * /backup.sh
+*/1 * * * * SLACK_SERVICE_PATH=$SLACK_SERVICE_PATH python3 /public_ip_monitor.py
