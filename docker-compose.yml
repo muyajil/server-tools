@@ -58,6 +58,7 @@ services:
       VIRTUAL_PORT: 9000
     networks:
       - base-network
+    restart: unless-stopped
   # END PORTAINER
   # START DOCKER PROXY
   docker-proxy:
