@@ -83,28 +83,6 @@ services:
     volumes:
       - ${WEBDAV_HOST_PATH}:/var/lib/dav
   # END WebDAV NAS BACKUP
-  # START Backup Service
-  backup:
-    image: muyajil/borg-backup-service:latest
-    environment:
-      BORG_USER: ${BORG_USER}
-      BORG_HOST: ${BORG_HOST}
-      BORG_PORT: ${BORG_PORT}
-      BORG_REPO_PATH_ON_HOST: ${BORG_REPO_PATH_ON_HOST}
-      ARCHIVE_NAME: ${ARCHIVE_NAME}
-      BORG_PASSPHRASE: ${BORG_PASSPHRASE}
-      BORG_KEYS_DIR: /borg_keys
-      HOURLY_BACKUPS: 1
-      DAILY_BACKUPS: 7
-      WEEKLY_BACKUPS: 4
-      SSH_KEY_PATH: /id_rsa
-      SLACK_WEBHOOK: ${SLACK_WEBHOOK}
-    volumes:
-      - ${BACKUP_SOURCE}:/backup_source
-      - ${SSH_KEY_PATH}:/id_rsa
-      - ${BORG_KEYS_DIR}:/borg_keys
-    restart: unless-stopped
-  # END Backup Service
   # START Public IP Monitor
   public-ip-monitor:
     image: muyajil/public-ip-slack-notifier:latest
