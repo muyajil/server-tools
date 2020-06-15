@@ -98,13 +98,19 @@ services:
       DAILY_BACKUPS: 7
       WEEKLY_BACKUPS: 4
       SSH_KEY_PATH: /id_rsa
-      SLACK_WEBHOOK: ${SLACK_WEBHOOK_BACKUP}
+      SLACK_WEBHOOK: ${SLACK_WEBHOOK}
     volumes:
       - ${BACKUP_SOURCE}:/backup_source
       - ${SSH_KEY_PATH}:/id_rsa
       - ${BORG_KEYS_DIR}:/borg_keys
     restart: unless-stopped
   # END Backup Service
+  # START Public IP Monitor
+  public-ip-monitor:
+    image: muyajil/public-ip-slack-notifier:latest
+    environment:
+      SLACK_WEBHOOK: ${SLACK_WEBHOOK}
+  # END Public IP Monitor
 
 networks:
   base-network:
