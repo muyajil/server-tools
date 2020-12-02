@@ -70,19 +70,6 @@ services:
     network_mode: none
     restart: always
   # END DOCKER PROXY
-  # START WebDAV NAS BACKUP
-  webdav-nas-backup:
-    image: bytemark/webdav:latest
-    restart: unless-stopped
-    ports:
-      - "8888:80"
-    environment:
-      AUTH_TYPE: Digest
-      USERNAME: ${WEBDAV_USER}
-      PASSWORD: ${WEBDAV_PW}
-    volumes:
-      - ${WEBDAV_HOST_PATH}:/var/lib/dav
-  # END WebDAV NAS BACKUP
   # START Public IP Monitor
   public-ip-monitor:
     image: muyajil/public-ip-slack-notifier:latest
