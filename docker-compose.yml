@@ -75,6 +75,7 @@ services:
     image: muyajil/public-ip-slack-notifier:latest
     environment:
       SLACK_WEBHOOK: ${SLACK_WEBHOOK}
+    restart: unless-stopped
   # END Public IP Monitor
 
 networks:
