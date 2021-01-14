@@ -77,6 +77,13 @@ services:
       SLACK_WEBHOOK: ${SLACK_WEBHOOK}
     restart: unless-stopped
   # END Public IP Monitor
+  # START Plex version Monitor
+  plex-version-monitor:
+    image: muyajil/plex-version-slack-notifier:latest
+    environment:
+      SLACK_WEBHOOK: ${SLACK_WEBHOOK}
+    restart: unless-stopped
+  # END Plex version Monitor
 
 networks:
   base-network:
