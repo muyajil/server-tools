@@ -36,16 +36,6 @@ services:
       - base-network
     restart: unless-stopped
   # END PORTAINER
-  # START DOCKER PROXY
-  docker-proxy:
-    image: qmcgaw/docker-proxy-acl-alpine:latest
-    volumes:
-      - /var/run/docker-proxy-acl:/tmp/docker-proxy-acl
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: -a containers
-    network_mode: none
-    restart: always
-  # END DOCKER PROXY
   # START Public IP Monitor
   public-ip-monitor:
     image: muyajil/public-ip-slack-notifier:latest
