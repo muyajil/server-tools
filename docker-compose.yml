@@ -22,30 +22,6 @@ services:
     networks:
       - base-network
   # END PIHOLE
-  # START NETDATA
-  netdata:
-    image: netdata/netdata:latest
-    hostname: netdata.${TLD}
-    cap_add:
-      - SYS_PTRACE
-    security_opt:
-      - apparmor:unconfined
-    volumes:
-      - /etc/passwd:/host/etc/passwd:ro
-      - /etc/group:/host/etc/group:ro
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /var/run/docker-proxy-acl/docker.sock:/var/run/docker.sock:ro
-    environment:
-      VIRTUAL_HOST: netdata.${TLD}
-      LETSENCRYPT_HOST: netdata.${TLD}
-      VIRTUAL_PORT: 19999
-    restart: unless-stopped
-    depends_on:
-      - docker-proxy
-    networks:
-      - base-network
-  # END NETDATA
   # START PORTAINER
   portainer:
     image: portainer/portainer:latest
