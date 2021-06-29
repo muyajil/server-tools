@@ -3,9 +3,8 @@ version: "3"
 services:
   # START WIREGUARD
   wireguard:
-    depends_on: [unbound, pihole]
+    depends_on: [pihole]
     image: linuxserver/wireguard
-    container_name: wireguard
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
@@ -26,31 +25,17 @@ services:
       - "51820:51820/udp"
     dns:
       - 10.2.0.100 # Points to pihole
-      - 10.2.0.200 # Points to unbound
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
 
     restart: unless-stopped
     networks:
-      private_network:
+      private-network:
         ipv4_address: 10.2.0.3
   # END WIREGUARD
-  # START UNBOUND
-  unbound:
-    image: "mvance/unbound:latest"
-    container_name: unbound
-    restart: unless-stopped
-    hostname: "unbound"
-    volumes:
-      - "./unbound.conf:/opt/unbound/etc/unbound/unbound.conf"
-    networks:
-      - private-network:
-        ipv4_address: 10.2.0.200
-  # END UNBOUND
   # START PIHOLE
   pihole:
     image: pihole/pihole:latest
-    depends_on: [unbound]
     ports:
       - "53:53/tcp"
       - "53:53/udp"
@@ -60,19 +45,19 @@ services:
       - "${VOLUMES_PATH}/pihole/etc-dnsmasq.d/:/etc/dnsmasq.d/"
     dns:
       - 127.0.0.1
-      - 10.2.0.200
+      - 1.1.1.1
     environment:
       VIRTUAL_HOST: pihole.${TLD}
       LETSENCRYPT_HOST: pihole.${TLD}
       VIRTUAL_PORT: 80
       TZ: Europe/Zurich
       ServerIP: 10.2.0.100
-      DNS1: 10.2.0.200
-      DNS2: 10.2.0.200
+      DNS1: 1.1.1.1
+      DNS2: 1.1.1.1
     restart: unless-stopped
     networks:
-      - base-network
-      - private-network:
+      base-network:
+      private-network:
         ipv4_address: 10.2.0.100
   # END PIHOLE
   # START PORTAINER
