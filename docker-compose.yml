@@ -1,6 +1,18 @@
 version: "3"
 
 services:
+  # START Watchtower
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    environment:
+      - WATCHTOWER_NOTIFICATIONS=slack
+      - WATCHTOWER_NOTIFICATION_SLACK_HOOK_URL=${SLACK_WEBHOOK}
+      - WATCHTOWER_NOTIFICATION_SLACK_IDENTIFIER=watchtower-srv
+      - WATCHTOWER_NOTIFICATION_SLACK_CHANNEL=#media_server
+      - WATCHTOWER_SCHEDULE=0 0 */12 * * *
+  # END Watchtower
   # START WIREGUARD
   wireguard:
     depends_on: [pihole]
