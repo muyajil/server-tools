@@ -26,7 +26,7 @@ services:
       - TZ=Europe/Zurich # Change to your timezone
       - SERVERPORT=51820
       - SERVERURL=srv.ajil.ch #optional - For use with DDNS (Uncomment to use)
-      - PEERS=muy # How many peers to generate for you (clients)
+      - PEERS=muy,aadil # How many peers to generate for you (clients)
       - PEERDNS=10.2.0.100 # Set it to point to pihole
       - INTERNAL_SUBNET=10.6.0.0
       
