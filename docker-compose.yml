@@ -66,6 +66,7 @@ services:
       ServerIP: 10.2.0.100
       DNS1: 1.1.1.1
       DNS2: 1.1.1.1
+      PIHOLE_UID: 0
     restart: unless-stopped
     networks:
       base-network:
