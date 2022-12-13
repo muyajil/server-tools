@@ -1,6 +1,33 @@
 version: "3"
 
 services:
+  # START Netdata
+  netdata:
+    image: netdata/netdata
+    hostname: ${TLD} # set to fqdn of host
+    restart: unless-stopped
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - ${VOLUMES_PATH}/netdata/config:/etc/netdata
+      - netdatalib:/var/lib/netdata
+      - netdatacache:/var/cache/netdata
+      - /etc/passwd:/host/etc/passwd:ro
+      - /etc/group:/host/etc/group:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /etc/os-release:/host/etc/os-release:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      VIRTUAL_HOST: netdata.${TLD}
+      VIRTUAL_PORT: 19999
+      LETSENCRYPT_HOST: netdata.${TLD}
+      DOCKER_USER: root
+    networks:
+      - base-network
+  # END Netdata
   # START Watchtower
   watchtower:
     image: containrrr/watchtower
@@ -31,7 +58,6 @@ services:
       - PEERS=muy,aadil # How many peers to generate for you (clients)
       - PEERDNS=10.2.0.100 # Set it to point to pihole
       - INTERNAL_SUBNET=10.6.0.0
-      
     volumes:
       - ${VOLUMES_PATH}/wireguard:/config
       - /lib/modules:/lib/modules
@@ -112,3 +138,7 @@ networks:
       driver: default
       config:
         - subnet: 10.2.0.0/24
+
+volumes:
+  netdatalib:
+  netdatacache:
