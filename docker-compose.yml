@@ -57,7 +57,7 @@ services:
       - TZ=Europe/Zurich # Change to your timezone
       - SERVERPORT=51820
       - SERVERURL=srv.ajil.ch #optional - For use with DDNS (Uncomment to use)
-      - PEERS=muy,aadil # How many peers to generate for you (clients)
+      - PEERS=muy,aadil,muyV2 # How many peers to generate for you (clients)
       - PEERDNS=10.2.0.100 # Set it to point to pihole
       - INTERNAL_SUBNET=10.6.0.0
     volumes:
@@ -69,6 +69,8 @@ services:
       - 10.2.0.100 # Points to pihole
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv4.ip_forward=1
+      - net.ipv6.conf.all.forwarding=1
 
     restart: unless-stopped
     networks:
