@@ -20,6 +20,7 @@ services:
       - /sys:/host/sys:ro
       - /etc/os-release:/host/etc/os-release:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /dev/dri:/dev/dri
     environment:
       VIRTUAL_HOST: netdata.${TLD}
       VIRTUAL_PORT: 19999
@@ -61,9 +62,10 @@ services:
   # START Samba
   samba:
     image: dperson/samba
-    command: -u "srv-user;${ADMIN_PW}" -s "media;/media;yes;no;no;srv-user"
+    command: -u "srv-user;${ADMIN_PW}" -s "media;/media;yes;no;no;srv-user" -s "volumes;/volumes;yes;no;no;srv-user"
     volumes:
       - /home/srv-user/media:/media
+      - /home/srv-user/volumes:/volumes
     environment:
       TZ: Europe/Zurich
       WORKGROUP: srv-user
