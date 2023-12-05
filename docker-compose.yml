@@ -63,7 +63,7 @@ services:
   # START Samba
   samba:
     image: dperson/samba
-    command: -u "srv-user;${ADMIN_PW}" -s "media;/media;yes;no;no;srv-user" -s "volumes;/volumes;yes;no;no;srv-user"
+    command: -r -u "srv-user;${ADMIN_PW}" -s "media;/media;yes;no;no;srv-user" -s "volumes;/volumes;yes;no;no;srv-user"
     volumes:
       - /home/srv-user/media:/media
       - /home/srv-user/volumes:/volumes
